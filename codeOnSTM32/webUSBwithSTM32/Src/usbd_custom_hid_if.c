@@ -89,10 +89,30 @@
 __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END =
 {
   /* USER CODE BEGIN 0 */ 
-  0x00, 
+  //#ifdef 0
+  0x05, 0x8c, /* USAGE_PAGE (ST Page) */
+  0x09, 0x01, /* USAGE (Demo Kit) */
+  0xa1, 0x01, /* COLLECTION (Application) */
+  /* 6 */ 
+  
+  // The Input report
+  0x09,0x03, // USAGE ID - Vendor defined
+  0x15,0x00, // LOGICAL_MINIMUM (0)
+  0x26,0x00, 0xFF, // LOGICAL_MAXIMUM (255)
+  0x75,0x08, // REPORT_SIZE (8)
+  0x95,0x40, // REPORT_COUNT (40)
+  0x81,0x02, // INPUT (Data,Var,Abs)
+  //19
+  // The Output report
+  0x09,0x04, // USAGE ID - Vendor defined
+  0x15,0x00, // LOGICAL_MINIMUM (0)
+  0x26,0x00,0xFF, // LOGICAL_MAXIMUM (255)
+  0x75,0x08, // REPORT_SIZE (8)
+  0x95,0x40, // REPORT_COUNT (40)
+  0x91,0x02, // OUTPUT (Data,Var,Abs)
+  //32
   /* USER CODE END 0 */ 
-  0xC0    /*     END_COLLECTION	             */
-   
+  0xC0    /*     END_COLLECTION                     */   
 }; 
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
@@ -165,6 +185,13 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
 static int8_t CUSTOM_HID_OutEvent_FS  (uint8_t event_idx, uint8_t state)
 { 
   /* USER CODE BEGIN 6 */ 
+  USBD_CUSTOM_HID_HandleTypeDef     *hhid;
+  hhid = (USBD_CUSTOM_HID_HandleTypeDef*) hUsbDeviceFS.pClassData;
+  if ((hhid->Report_buf[0]&1)==0){
+    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);//LED off
+  }else{
+    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
+	}
   return (0);
   /* USER CODE END 6 */ 
 }

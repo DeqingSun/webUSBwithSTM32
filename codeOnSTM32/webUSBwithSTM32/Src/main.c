@@ -46,7 +46,7 @@
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "usbd_customhid.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -74,7 +74,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  uint8_t HID_Buffer[64];
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -100,7 +100,21 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+    //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, HID_Buffer,65);
+    static uint32_t tickButton = 0;
+    static uint8_t previousButton = 0;
+    uint32_t intervalButton = 20;
+    uint32_t ticknow = HAL_GetTick();
+    if (ticknow-tickButton>=intervalButton){
+      uint8_t currentButton = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0);
+      if (currentButton!=previousButton){
+        HID_Buffer[0]=currentButton?0:1;
+        previousButton=currentButton;
+        USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, HID_Buffer,1);
+      }
+      tickButton+=intervalButton;
+    }
+        //
   }
   /* USER CODE END 3 */
 
@@ -191,7 +205,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : PA0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
