@@ -135,6 +135,8 @@
 #define USBD_EP_TYPE_BULK                                 2
 #define USBD_EP_TYPE_INTR                                 3
 
+#define USBD_LPM_ENABLED                                  1
+
 
 /**
   * @}

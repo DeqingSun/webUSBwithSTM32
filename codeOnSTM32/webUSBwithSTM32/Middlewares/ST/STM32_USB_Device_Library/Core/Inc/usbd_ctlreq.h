@@ -81,6 +81,7 @@
   * @{
   */ 
 
+USBD_StatusTypeDef  USBD_VendorDevReq (USBD_HandleTypeDef  *pdev, USBD_SetupReqTypedef  *req);
 USBD_StatusTypeDef  USBD_StdDevReq (USBD_HandleTypeDef  *pdev, USBD_SetupReqTypedef  *req);
 USBD_StatusTypeDef  USBD_StdItfReq (USBD_HandleTypeDef  *pdev, USBD_SetupReqTypedef  *req);
 USBD_StatusTypeDef  USBD_StdEPReq  (USBD_HandleTypeDef  *pdev, USBD_SetupReqTypedef  *req);

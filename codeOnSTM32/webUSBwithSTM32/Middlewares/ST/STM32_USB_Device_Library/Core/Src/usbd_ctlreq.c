@@ -110,6 +110,67 @@ static uint8_t USBD_GetLen(uint8_t *buf);
 
 
 /**
+* @brief  USBD_VendorDevReq
+*         Handle vendor usb device requests
+* @param  pdev: device instance
+* @param  req: usb request
+* @retval status
+*/
+#define WEBUSB_REQUEST_GET_ALLOWED_ORIGINS		0x01
+#define WEBUSB_REQUEST_GET_URL			0x02
+
+#define numAllowedOrigins  2
+__ALIGN_BEGIN static uint8_t allowedOriginsFull[] __ALIGN_END = {
+  // Allowed Origins Header, bNumConfigurations = 1
+  0x05, 0x00, 0x0c + numAllowedOrigins, 0x00, 0x01,
+  // Configuration Subset Header, bNumFunctions = 1
+  0x04, 0x01, 0x01, 0x01,
+  // Function Subset Header, bFirstInterface = pluggedInterface
+  0x03 + numAllowedOrigins, 0x02, 0,
+  // allowedOrigins[]
+  1, 2				
+};
+#define numUrls  2
+typedef struct
+{
+  uint8_t scheme;
+  const char* url;
+} WebUSBURL;
+const WebUSBURL URLS[] = {
+  { 1, "webusb.github.io/arduino/demos/" },
+  { 0, "localhost:80" },
+};
+
+USBD_StatusTypeDef  USBD_VendorDevReq (USBD_HandleTypeDef *pdev , USBD_SetupReqTypedef  *req)
+{
+  USBD_StatusTypeDef ret = USBD_OK;  
+	
+  if (req->bmRequest == (0x80 | USB_REQ_TYPE_VENDOR | USB_REQ_RECIPIENT_DEVICE)) {				
+    if (req->bRequest == 0x01 && req->wIndex == WEBUSB_REQUEST_GET_ALLOWED_ORIGINS) {
+      uint16_t requestLength=req->wLength;
+      uint16_t dataLength=sizeof(allowedOriginsFull)/sizeof(uint8_t);
+      USBD_CtlSendData(pdev,allowedOriginsFull,requestLength<dataLength?requestLength:dataLength);
+    }else if (req->bRequest == 0x01 && req->wIndex == WEBUSB_REQUEST_GET_URL){
+      uint8_t wValueL=req->wValue&0xFF;
+      if (wValueL == 0 || wValueL > numUrls) USBD_CtlError(pdev , req);
+      const WebUSBURL *url = &URLS[wValueL - 1];
+      uint8_t urlLength = strlen(url->url);
+      uint8_t descriptorLength = urlLength + 3;
+      uint8_t descriptorType = 3;
+      uint8_t dataBuf[255]={descriptorLength,descriptorType,url->scheme};
+      strcpy((char *)&dataBuf[3],url->url);
+      USBD_CtlSendData(pdev,dataBuf,req->wLength<descriptorLength?req->wLength:descriptorLength);
+    }else{
+      USBD_CtlError(pdev , req);
+    }
+  }else{
+    USBD_CtlError(pdev , req);
+  }
+
+  return ret;
+}
+
+/**
 * @brief  USBD_StdDevReq
 *         Handle standard usb device requests
 * @param  pdev: device instance

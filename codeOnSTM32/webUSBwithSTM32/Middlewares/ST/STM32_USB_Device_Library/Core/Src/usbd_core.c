@@ -271,7 +271,11 @@ USBD_StatusTypeDef USBD_LL_SetupStage(USBD_HandleTypeDef *pdev, uint8_t *psetup)
   switch (pdev->request.bmRequest & 0x1F) 
   {
   case USB_REQ_RECIPIENT_DEVICE:   
-    USBD_StdDevReq (pdev, &pdev->request);
+    if((pdev->request.bmRequest & USB_REQ_TYPE_MASK) ==  USB_REQ_TYPE_VENDOR) {
+      USBD_VendorDevReq (pdev, &pdev->request);
+    }else{
+      USBD_StdDevReq (pdev, &pdev->request);
+    }
     break;
     
   case USB_REQ_RECIPIENT_INTERFACE:     

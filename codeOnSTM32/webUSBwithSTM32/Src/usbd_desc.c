@@ -74,6 +74,28 @@
 #define USBD_SERIALNUMBER_STRING_FS     "00000000001A"
 #define USBD_CONFIGURATION_STRING_FS     "Custom HID Config"
 #define USBD_INTERFACE_STRING_FS     "Custom HID Interface"
+#if (USBD_LPM_ENABLED == 1)
+static uint8_t BOS_DESCRIPTOR_PREFIX[] = {
+0x05,  // Length
+0x0F,  // Binary Object Store descriptor
+0x1D, 0x00,  // Total length
+0x01,  // Number of device capabilities
+
+// WebUSB Platform Capability descriptor (bVendorCode == 0x01).
+0x18,  // Length
+0x10,  // Device Capability descriptor
+0x05,  // Platform Capability descriptor
+0x00,  // Reserved
+0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,
+0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65,  // WebUSB GUID
+0x00, 0x01,  // Version 1.0
+0x01,  // Vendor request code
+};
+
+static uint8_t landingPage = 1;
+// Landing page (1 byte) sent in the middle.
+
+#endif
 
 /* USER CODE BEGIN 0 */
 
@@ -99,6 +121,7 @@ uint8_t *     USBD_FS_ProductStrDescriptor ( USBD_SpeedTypeDef speed , uint16_t 
 uint8_t *     USBD_FS_SerialStrDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
 uint8_t *     USBD_FS_ConfigStrDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
 uint8_t *     USBD_FS_InterfaceStrDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
+uint8_t *     USBD_FS_BOSDescriptor( USBD_SpeedTypeDef speed , uint16_t *length);
 
 #ifdef USB_SUPPORT_USER_STRING_DESC
 uint8_t *     USBD_FS_USRStringDesc (USBD_SpeedTypeDef speed, uint8_t idx , uint16_t *length);  
@@ -113,6 +136,9 @@ USBD_DescriptorsTypeDef FS_Desc =
   USBD_FS_SerialStrDescriptor,
   USBD_FS_ConfigStrDescriptor,
   USBD_FS_InterfaceStrDescriptor,
+#if (USBD_LPM_ENABLED == 1)
+  USBD_FS_BOSDescriptor,
+#endif
 };
 
 #if defined ( __ICCARM__ ) /*!< IAR Compiler */
@@ -123,7 +149,7 @@ __ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
   {
     0x12,                       /*bLength */
     USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
-    0x00,                       /* bcdUSB */  
+    0x10,                       /* bcdUSB */  
     0x02,
     0x00,                       /*bDeviceClass*/
     0x00,                       /*bDeviceSubClass*/
@@ -292,6 +318,29 @@ uint8_t *  USBD_FS_InterfaceStrDescriptor( USBD_SpeedTypeDef speed , uint16_t *l
   }
   return USBD_StrDesc;  
 }
+
+#if (USBD_LPM_ENABLED == 1)
+/**
+* @brief  USBD_HS_BOSDescriptor 
+*         return the interface BOS descriptor
+* @param  speed : current device speed
+* @param  length : pointer to data length variable
+* @retval pointer to descriptor buffer
+*/
+uint8_t *  USBD_FS_BOSDescriptor( USBD_SpeedTypeDef speed , uint16_t *length)
+{
+  uint8_t idx = 0,i;
+	uint8_t *source;
+  *length =  ((sizeof(BOS_DESCRIPTOR_PREFIX))/sizeof(uint8_t)) + 1;    
+  
+	for (i=0,source=BOS_DESCRIPTOR_PREFIX;i<((sizeof(BOS_DESCRIPTOR_PREFIX))/sizeof(uint8_t));i++){
+    USBD_StrDesc[idx++] = *source++;
+  }		
+  USBD_StrDesc[idx++] = landingPage;
+  
+  return USBD_StrDesc;  
+}
+#endif
 /**
   * @}
   */ 
