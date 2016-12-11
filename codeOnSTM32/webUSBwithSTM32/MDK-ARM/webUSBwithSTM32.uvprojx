@@ -463,11 +463,6 @@
               <FilePath>../Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_custom_hid_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/usbd_custom_hid_if.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f1xx_it.c</FilePath>
@@ -497,6 +492,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/usbd_desc.c</FilePath>
             </File>
+            <File>
+              <FileName>usbd_webusb_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\usbd_webusb_if.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -521,11 +521,6 @@
               <FileName>usbd_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbd_customhid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Src/usbd_customhid.c</FilePath>
             </File>
             <File>
               <FileName>usbd_ctlreq.c</FileName>

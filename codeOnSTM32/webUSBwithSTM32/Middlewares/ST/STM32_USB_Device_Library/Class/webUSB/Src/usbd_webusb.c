@@ -46,7 +46,7 @@
   */ 
 
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_customhid.h"
+#include "usbd_webusb.h"
 #include "usbd_desc.h"
 #include "usbd_ctlreq.h"
 

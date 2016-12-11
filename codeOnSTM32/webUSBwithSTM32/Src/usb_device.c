@@ -47,8 +47,8 @@
 #include "usb_device.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
-#include "usbd_customhid.h"
-#include "usbd_custom_hid_if.h"
+#include "usbd_webusb.h"
+#include "usbd_webusb_if.h"
 
 /* USB Device Core handle declaration */
 USBD_HandleTypeDef hUsbDeviceFS;

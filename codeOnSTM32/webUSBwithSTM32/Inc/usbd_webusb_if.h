@@ -50,7 +50,7 @@
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_customhid.h"
+#include "usbd_webusb.h"
 /* USER CODE BEGIN INCLUDE */
 /* USER CODE END INCLUDE */
 

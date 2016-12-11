@@ -46,7 +46,7 @@
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
-#include "usbd_customhid.h"
+#include "usbd_webusb.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
